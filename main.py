@@ -9,7 +9,7 @@ warnings.filterwarnings('ignore')
 st.set_page_config(layout="wide")
 
 # Título do dashboard
-st.title('Tech Challenge: Análise de Exportação de Vinhos - Viti Brasil')
+st.title('(FIAP) Tech Challenge: Análise de Exportação de Vinhos - Viti Brasil')
 
 # Carregar e pré-processar os dados de exportação
 try:
@@ -74,7 +74,7 @@ ano_inicio, ano_fim = st.sidebar.slider(
 
 # Filtro de país
 paises = sorted(df_final['País'].unique())
-paises.insert(0, "Todos")
+paises.insert(0, "Todos")       # Adicionar opção para filtrar todos os países
 pais_selecionado = st.sidebar.selectbox("País de Destino", paises)
 
 # Filtrar o dataframe com base nos filtros selecionados
@@ -118,7 +118,7 @@ df_top_10 = df_volume_valor.sort_values("Valor_dolar", ascending=False).head(10)
 # Derreter o DataFrame para criar um gráfico de barras duplas
 df_melted_top_10 = df_top_10.melt(id_vars="País", value_vars=['Valor_dolar', 'Quantidade_litros'], var_name='Métrica', value_name='Valor')
 
-# Criar o gráfico de barras com 'Métrica' (Valor ou Volume) como a cor
+# Criar o gráfico de barras com métrica (Valor ou Volume) como a cor
 fig_double_bar = px.bar(
     df_melted_top_10,
     x='País',
@@ -127,8 +127,8 @@ fig_double_bar = px.bar(
     barmode='group',
     title='Volume e Valor de Exportação dos 10 Principais Países',
     labels={
-        'País': 'País de Destino',
-        'Valor': 'Total'
+        'Valor_dolar': 'Valor (US$)',
+        'Quantidade_litros': 'Quantidade (L)'
     }
 )
 
@@ -153,21 +153,59 @@ else:
 col3.plotly_chart(fig_time_valor, use_container_width=True)
 col4.plotly_chart(fig_time_quantidade, use_container_width=True)
 
-# Exibir a tabela de dados
-tabela_exibicao = df_filtered.rename(columns={
-    'País': 'País de Destino',
-    'Quantidade_litros': 'Quantidade em litros',
-    'Valor_dolar': 'Valor em US$'
-})
-tabela_exibicao.insert(0, 'País de Origem', 'Brasil')
-st.dataframe(tabela_exibicao[['País de Origem', 'País de Destino', 'Ano', 'Quantidade em litros', 'Valor em US$']])
+########### RELATÓRIO ESCRITO ###########
+st.divider()
 
-# Placeholder para a análise de fatores externos
-st.subheader('Prospecções Futuras e Ações Possíveis para Melhoria')
+# Relatório da análise (considerando fatores demográficos e econômicos)
+st.header('Relatório de Análise do Mercado de Exportação de Vinhos da Viti Brasil (2008-2023)')
 st.write("""
-Aqui você pode adicionar sua análise baseada nos dados e em fatores externos como dados climáticos, demográficos, econômicos e de avaliação de vinhos.
-* **Análise Econômica:** Como a inflação ou o câmbio do dólar afetam as exportações?
-* **Análise Demográfica:** Quais países com crescimento populacional ou com maior poder de compra podem ser mercados-alvo?
-* **Análise Climática:** Como as variações climáticas afetam a produção de vinho no Brasil e, consequentemente, a exportação?
-* **Análise de Avaliações:** Que tipos de vinho são mais bem avaliados e em quais mercados?
+**Introdução:** Este relatório apresenta uma análise detalhada do desempenho da empresa Viti Brasil no mercado de exportação de vinhos, abrangendo o período de 2008 a 2023. A análise foi conduzida com base em gráficos que mostram o valor e a quantidade total de exportação, a participação dos principais países e o comparativo entre volume e valor para cada destino. O objetivo é identificar as tendências de mercado, os pontos de inflexão e os fatores que influenciaram o desempenho da empresa.
+""")
+###########
+st.divider()
+st.subheader('1. Desempenho Geral e Tendências Históricas (2008-2023)')
+st.write("""
+O desempenho da Viti Brasil no mercado internacional de vinhos foi marcado por uma grande volatilidade ao longo do período analisado.
+* **Pico de Exportação em 2013:** O ano de 2013 se destacou como o auge das exportações, registrando um pico histórico de **$22.5M em valor** e **25M de litros em quantidade**. Este foi um período de grande sucesso para a empresa.
+* **Queda Abrupta e Recuperação:** Após o recorde de 2013, as exportações sofreram uma queda acentuada, atingindo os menores níveis em 2015. Posteriormente, o mercado se recuperou, estabilizando-se em um patamar mais baixo do que o pico de 2013, mas com uma tendência de crescimento consistente entre 2019 e 2021.
+* **Estagnação Recente:** Observa-se uma leve queda no valor e na quantidade de exportação em 2022, indicando uma possível estagnação ou o início de um novo ciclo de declínio.
+""")
+###########
+st.divider()
+st.subheader('2. Análise dos Principais Mercados de Destino')
+st.write("""
+A Viti Brasil demonstra uma forte concentração de suas exportações em poucos mercados-chave.
+* **Paraguai e Rússia como Pilares:** O **Paraguai** e a **Rússia** são os principais destinos, respondendo juntos por uma fatia majoritária das exportações. O Paraguai lidera em valor total de US 400M, com uma participação de cerca de 35%. Enquanto a Rússia é o segundo principal mercado, com um valor total de exportação de aproximadamente US 250M (participação de 25%).
+* **Diferença de Perfil de Compra:** A análise comparativa de volume e valor para esses países revela perfis de compra distintos:\\
+        **-	Paraguai:** Compra vinhos com maior valor agregado, com um preço médio por litro considerável. Isso sugere que o mercado paraguaio valoriza a qualidade e a Viti Brasil exporta para este destino produtos mais sofisticados.\\
+        **-	Rússia:** Apesar de ser um grande comprador em volume, o preço médio por litro é, em geral, mais baixo do que o do Paraguai. Isso sugere uma preferência por vinhos mais baratos, como os vinhos a granel.
+* **Diversificação:** A presença de outros mercados importantes como **Estados Unidos**, **China**, **Reino Unido** e **Espanha** demonstra uma estratégia de diversificação de portfólio de clientes, o que ajuda a mitigar riscos e a não depender exclusivamente de um ou dois mercados.
+""")
+###########
+st.divider()
+st.subheader('3. Fatores que Influenciaram os Picos de 2009 e 2013')
+st.write("""
+A análise detalhada dos anos de 2009 e 2013, utilizando os gráficos com filtros específicos, revelou que as dinâmicas de mercado para esses anos foram significativamente diferentes.
+""")
+st.write('**_Desvalorização em 2009:_**')
+st.write("""
+A queda no valor médio do vinho brasileiro em 2009 pode ser atribuída à confluência de fatores globais e a uma estratégia de exportação específica:
+* **Principal comprador: Rússia (baixo valor unitário):** O gráfico de 2009 mostra que a Rússia foi o principal destino das exportações. A relação entre volume e valor para a Rússia indica que a Viti Brasil exportou grandes quantidades de vinho com um preço médio por litro muito baixo, puxando a média geral de exportação para baixo.
+* **Crise Financeira Global (2008-2009):** A crise econômica gerou um ambiente de recessão e incerteza, forçando a Viti Brasil, e a indústria vinícola em geral, a buscar mercados que comprassem grandes volumes, mesmo que a preços mais baixos, para escoar a produção.
+* **Aumento da Concorrência e Vendas a Granel:** A forte concorrência global e a necessidade de liquidar estoques levaram a um foco em exportações de baixo valor agregado, como o vinho a granel, especialmente para mercados como o russo.
+""")
+st.write('**_Valorização em 2013:_**')
+st.write("""
+O pico histórico de 2013, com o aumento do valor médio por litro, pode ser explicado pela mudança de estratégia e condições de mercado:
+* **Continuidade da Rússia como Principal Comprador, mas com maior valor agregado:** A Rússia continuou sendo o principal comprador, mas a análise do volume e valor em 2013 indica que o preço médio por litro exportado para este país aumentou substancialmente. Isso sugere uma mudança no mix de produtos, com a Viti Brasil exportando vinhos de maior valor agregado (vinhos finos engarrafados, por exemplo).
+* **Melhora da Economia e Demanda na Rússia:** A estabilidade e o crescimento da economia russa no período pré-2014, impulsionados pelos preços do petróleo, aumentaram o poder de compra dos consumidores e a demanda por produtos importados de maior qualidade.
+* **Estratégia de Posicionamento:** A empresa pode ter reposicionado sua marca no mercado russo, focando em nichos mais lucrativos e em vinhos premium, o que justificaria o aumento do valor total da exportação.
+""")
+###########
+st.divider()
+st.subheader('Fontes:')
+st.write("""
+* [Redalyc](https://www.redalyc.org/journal/762/76261661004/html/ "O impacto da crise financeira internacional de 2008 sobre a estrutura de capital das empresas de países desenvolvidos e emergentes"): O impacto da crise financeira internacional de 2008 sobre a estrutura de capital das empresas de países desenvolvidos e emergentes
+* [Correio Braziliense](https://www.correiobraziliense.com.br/app/noticia/economia/2009/01/07/internas_economia,63810/venda-de-vinho-do-porto-em-2008-e-a-pior-em-duas-decadas.shtml "Venda de vinho do Porto em 2008 é a pior em duas décadas"): Venda de vinho do Porto em 2008 é a pior em duas décadas
+* [Revista Adega](https://revistaadega.uol.com.br/artigo/consumo-de-vinho-importado-e-de-espumante-cresce-na-russia_9804.html "Consumo de vinho importado cresce na Rússia"): Consumo de vinho importado cresce na Rússia (2014)
 """)
